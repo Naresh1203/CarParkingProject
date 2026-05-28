@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "jWsgC+lTtsrKR59yo69dG0DL0iVQGdehLXYTwhbqZbI=",
+  "Source": "SmartParking.Server",
+  "BasePath": "_content/SmartParking.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartParking - Project Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&family=Arial&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      color: #000;
+      background: #fff;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto 20px auto;
+      padding: 25mm 25mm 25mm 30mm;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      outline: 2px solid #000; /* Create the box border */
+      outline-offset: -10mm; /* Draw it 10mm INSIDE the page edge so it doesn't get cut off */
+      page-break-after: always;
+      position: relative;
+    }
+
+    @media print {
+      body {
+        background: white;
+        margin: 0;
+      }
+
+      @page {
+        size: A4;
+        margin: 0; /* Removes browser default header/footer (date, title, URL) */
+      }
+
+      .page {
+        box-shadow: none;
+        margin: 0;
+        outline: 2px solid #000;
+        outline-offset: -10mm;
+        page-break-after: always;
+      }
+    }
+
+    /* Title Page */
+    .title-page {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 250mm;
+    }
+
+    .title-page .logo {
+      font-size: 48pt;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .title-page h1 {
+      font-size: 22pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 20px 0 10px;
+      letter-spacing: 2px;
+    }
+
+    .title-page h2 {
+      font-size: 16pt;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .title-page h3 {
+      font-size: 14pt;
+      font-weight: normal;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .title-page .by-section {
+      margin: 30px 0;
+    }
+
+    .title-page .by-section p {
+      font-size: 13pt;
+      line-height: 2;
+    }
+
+    .title-page .institute {
+      font-size: 13pt;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+
+    .title-page .degree {
+      font-size: 12pt;
+      margin-top: 8px;
+    }
+
+    .title-page .year {
+      font-size: 12pt;
+      margin-top: 8px;
+    }
+
+    .divider {
+      width: 80%;
+      height: 2px;
+      background: #333;
+      margin: 20px auto;
+    }
+
+    /* Headers */
+    h1.chapter {
+      font-size: 16pt;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 30px 0 20px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 8px;
+    }
+
+    h2.section {
+      font-size: 13pt;
+      font-weight: bold;
+      margin: 20px 0 10px;
+    }
+
+    h3.subsection {
+      font-size: 12pt;
+      font-weight: bold;
+      margin: 15px 0 8px;
+    }
+
+    h4.subsubsection {
+      font-size: 12pt;
+      font-weight: bold;
+      font-style: italic;
+      margin: 12px 0 6px;
+    }
+
+    /* Body text */
+    p {
+      text-align: justify;
+      line-height: 1.8;
+      margin-bottom: 10px;
+      text-indent: 30px;
+    }
+
+    p.no-indent {
+      text-indent: 0;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+      margin: 10px 0 10px 40px;
+      line-height: 1.8;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    /* Table of Contents */
+    .toc-entry {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dotted #aaa;
+      font-size: 12pt;
+    }
+
+    .toc-entry.chapter {
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .toc-entry.section {
+      padding-left: 20px;
+    }
+
+    .toc-entry.subsection {
+      padding-left: 40px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 11pt;
+    }
+
+    th {
+      background: #1a1a1a;
+      color: white;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    td {
+      border: 1px solid #999;
+      padding: 7px 10px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background: #f5f5f5;
+    }
+
+    .table-caption {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: 11pt;
+    }
+
+    /* Diagram placeholders */
+    .diagram-box {
+      border: 2px solid #333;
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px auto;
+      background: #fafafa;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0; /* CRITICAL: prevents flex child from expanding container */
+      box-sizing: border-box;
+    }
+
+    /* Ensure Mermaid diagrams scale to fit the box */
+    .mermaid {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0; /* CRITICAL: prevents flex child from expanding container */
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    
+    .mermaid svg {
+      max-width: 100% !important;
+      height: auto !important;
+      width: auto !important; /* CRITICAL: Override fixed mermaid width */
+      display: block;
+      margin: 0 auto;
+    }
+
+    .diagram-box .label {
+      font-size: 10pt;
+      color: #666;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* Code blocks */
+    pre {
+      background: #f4f4f4;
+      border: 1px solid #ccc;
+      border-left: 4px solid #1a1a1a;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 9pt;
+      overflow-x: auto;
+      margin: 12px 0;
+      white-space: pre-wrap;
+    }
+
+    /* Acknowledgement */
+    .ack-text {
+      text-align: justify;
+      line-height: 2;
+      text-indent: 30px;
+      font-size: 12pt;
+    }
+
+    /* Page numbering area */
+    .page-footer {
+      text-align: center;
+      font-size: 10pt;
+      color: #666;
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== TITLE PAGE ===== -->
+  <div class="page">
+    <div class="title-page">
+      <h1>Project Report</h1>
+      <h2>on</h2>
+      <h1>Smart Parking Management System</h1>
+      <h3>(SmartParking)</h3>
+      <div class="by-section">
+        <p><strong>By</strong></p>
+        <p>Narendra Balunda - 31</p>
+        <p>Naresh Chandra Kumawat - 32</p>
+      </div>
+      <p class="institute"><strong>School Of Information Technology(SOIT)</strong></p>
+      <p class="degree">MSC(CS)</p>
+      <p class="year">Academic Year: 2025–27</p>
+    </div>
+  </div>
+
+  <!-- ===== ACKNOWLEDGEMENT ===== -->
+  <div class="page">
+    <h1 class="chapter">Acknowledgement</h1>
+    <p class="ack-text">We take great pleasure in presenting our project titled <em>"Smart Parking Management System
+        (SmartParking)"</em>, completed as part of the academic curriculum for the degree of MSC(CS).</p>
+    <p class="ack-text">We would like to express our sincere gratitude to our respected guide for their valuable
+      guidance, continuous support, and encouragement throughout the development of this project. Their insightful
+      suggestions and constructive feedback helped us in successfully completing this work.</p>
+    <p class="ack-text">We are also thankful to all the faculty members of the department for providing us with the
+      necessary knowledge and resources required for the completion of this project.</p>
+    <p class="ack-text">We extend our heartfelt thanks to our friends and classmates for their support, cooperation, and
+      valuable suggestions during the project development phase.</p>
+    <p class="ack-text">Finally, we would like to thank our family members for their constant motivation and
+      encouragement, which helped us complete this project successfully.</p>
+    <p class="ack-text">This project has helped us gain practical knowledge in web technologies, database management,
+      backend API development, JWT-based authentication, and real-time email notification systems, and has been a
+      valuable learning experience for us.</p>
+    <br><br>
+    <p class="ack-text"><strong>Project Team</strong><br>
+      Smart Parking Management System (SmartParking)<br>
+      MSC(CS)<br>
+      Academic Year: 2025–26</p>
+  </div>
+
+  <!-- ===== TABLE OF CONTENTS ===== -->
+  <div class="page">
+    <h1 class="chapter">Table of Contents</h1>
+    <div class="toc-entry chapter"><span>CHAPTER 1: INTRODUCTION</span><span></span></div>
+    <div class="toc-entry section"><span>1.1 Existing System and Need for System</span><span>4</span></div>
+    <div class="toc-entry section"><span>1.2 Scope of Work</span><span>5</span></div>
+    <div class="toc-entry section"><span>1.3 Operating Environment – Hardware and Software</span><span>6</span></div>
+
+    <div class="toc-entry chapter"><span>CHAPTER 2: PROPOSED SYSTEM</span><span></span></div>
+    <div class="toc-entry section"><span>2.1 Proposed System</span><span>7</span></div>
+    <div class="toc-entry section"><span>2.2 Objectives of System</span><span>8</span></div>
+    <div class="toc-entry section"><span>2.3 User Requirements</span><span>9</span></div>
+
+    <div class="toc-entry chapter"><span>CHAPTER 3: ANALYSIS &amp; DESIGN</span><span></span></div>
+    <div class="toc-entry section"><span>3.1 Data Flow Diagram (DFD)</span><span>10</span></div>
+    <div class="toc-entry section"><span>3.2 Functional Decomposition Diagram (FDD)</span><span>11</span></div>
+    <div class="toc-entry section"><span>3.3 UML Diagrams</span><span>12</span></div>
+    <div class="toc-entry subsection"><span>3.3.1 Class Diagram</span><span>12</span></div>
+    <div class="toc-entry subsection"><span>3.3.2 Object Diagram</span><span>13</span></div>
+    <div class="toc-entry subsection"><span>3.3.3 Use Case Diagram</span><span>14</span></div>
+    <div class="toc-entry subsection"><span>3.3.4 Sequence Diagram</span><span>15</span></div>
+    <div class="toc-entry subsection"><span>3.3.5 Collaboration Diagram</span><span>16</span></div>
+    <div class="toc-entry subsection"><span>3.3.6 State Diagram</span><span>17</span></div>
+    <div class="toc-entry subsection"><span>3.3.7 Activity Diagram</span><span>18</span></div>
+    <div class="toc-entry subsection"><span>3.3.8 Component Diagram</span><span>19</span></div>
+    <div class="toc-entry subsection"><span>3.3.9 Deployment Diagram</span><span>20</span></div>
+    <div class="toc-entry section"><span>3.4 Entity Relationship Diagram (ERD)</span><span>21</span></div>
+    <div class="toc-entry section"><span>3.5 Data Dictionary</span><span>22</span></div>
+    <div class="toc-entry section"><span>3.6 Table Design</span><span>23</span></div>
+    <div class="toc-entry section"><span>3.7 Code Design</span><span>24</span></div>
+
+    <div class="toc-entry chapter"><span>CHAPTER 4: USER MANUAL</span><span></span></div>
+    <div class="toc-entry section"><span>4.1 Operations Manual / Menu Explanation</span><span>26</span></div>
+    <div class="toc-entry section"><span>4.2 Menu Screens</span><span>27</span></div>
+    <div class="toc-entry section"><span>4.3 Project Code</span><span>28</span></div>
+
+    <div class="toc-entry chapter"><span>CHAPTER 5: TESTING</span><span></span></div>
+    <div class="toc-entry section"><span>5.1 Testing Test Plan</span><span>32</span></div>
+    <div class="toc-entry section"><span>5.2 Black Box Testing or Data Validation</span><span>33</span></div>
+    <div class="toc-entry section"><span>5.3 White Box Testing or Functional Validation</span><span>34</span></div>
+    <div class="toc-entry section"><span>5.4 Test Cases and Results</span><span>35</span></div>
+
+    <div class="toc-entry chapter"><span>CHAPTER 6: LIMITATIONS AND ENHANCEMENT</span><span></span></div>
+    <div class="toc-entry section"><span>6.1 Drawbacks and Limitations</span><span>37</span></div>
+    <div class="toc-entry section"><span>6.2 Proposed Enhancements</span><span>38</span></div>
+    <div class="toc-entry section"><span>6.3 Conclusions</span><span>39</span></div>
+    <div class="toc-entry section"><span>6.4 Bibliography</span><span>40</span></div>
+  </div>
+
+  <!-- ===== CHAPTER 1 ===== -->
+  <div class="page">
+    <h1 class="chapter">Chapter 1: Introduction</h1>
+
+    <h2 class="section">1.1 Existing System and Need for System</h2>
+    <p>In modern urban environments, parking management has become one of the most pressing challenges faced by city
+      dwellers, shopping malls, hospitals, and educational institutions. The conventional approach to parking relies
+      entirely on manual operations — security guards directing vehicles, physical token systems, and paper-based
+      records — all of which are inherently inefficient, error-prone, and unable to scale with rising vehicle
+      populations.</p>
+    <p>Traditional parking systems suffer from numerous shortcomings. Drivers must physically explore an entire parking
+      facility looking for a vacant spot, wasting significant fuel and time. There is no centralized visibility into
+      slot availability, no digital record of active bookings, and no mechanism for prior reservation. Disputes over
+      occupied slots are common, and revenue leakage due to untracked entries is significant.</p>
+    <p>Furthermore, the COVID-19 pandemic accelerated the demand for contactless, digital-first solutions across all
+      sectors. Parking is no exception. The need for a system that allows users to browse available parking spots, make
+      reservations in advance, receive real-time email confirmations, and manage their bookings entirely from a web
+      browser is more urgent than ever.</p>
+    <p>The SmartParking Management System was conceived to directly address all these pain points. It replaces
+      fragmented, manual workflows with a fully integrated, web-based platform that connects three key actors: Parking
+      Hosts (who list and manage their spots), Users (who search, book, and cancel reservations), and Administrators
+      (who oversee platform-wide operations). Every significant action — registration, login, booking, and cancellation
+      — is accompanied by an automated email notification, ensuring transparency and trust at every step.</p>
+
+    <h2 class="section">1.2 Scope of Work</h2>
+    <p>The scope of the SmartParking project encompasses the design, development, testing, and deployment of a
+      full-stack web application for intelligent parking spot management. The system is built using ASP.NET Core 8.0 for
+      the backend REST API, a vanilla HTML/CSS/JavaScript frontend, and MySQL as the persistent relational database.</p>
+    <p>The key functional areas covered within this project are:</p>
+    <ul>
+      <li><strong>User Authentication:</strong> Secure registration and login using JWT (JSON Web Tokens) with
+        role-based access control (User, Host, Admin).</li>
+      <li><strong>Parking Spot Management:</strong> Hosts can list, update, and remove parking spots with details such
+        as name, address, GPS coordinates, price per hour, and total capacity.</li>
+      <li><strong>Booking System:</strong> Registered users can search for available spots, select time slots, add their
+        vehicles, and confirm reservations. The system enforces conflict detection to prevent double-booking.</li>
+      <li><strong>Email Notification Service:</strong> An integrated SMTP email service using Gmail dispatches automated
+        confirmations for registration, login alerts, booking confirmation, cancellation, and password reset.</li>
+      <li><strong>Forgot Password Flow:</strong> A secure, token-based password reset mechanism generates a 6-digit OTP
+        with a 15-minute expiry, delivered via email, allowing users to reset their passwords safely.</li>
+      <li><strong>Vehicle Management:</strong> Users can register their vehicles and associate them with bookings.</li>
+      <li><strong>Admin Dashboard:</strong> An administrative interface for platform management.</li>
+      <li><strong>Camera Integration:</strong> A camera controller supports entry/exit image capture endpoints for
+        advanced tracking.</li>
+    </ul>
+    <p>The scope explicitly excludes payment gateway integration, mobile application development, and IoT-based physical
+      barrier automation, which are planned for future enhancements.</p>
+
+    <h2 class="section">1.3 Operating Environment – Hardware and Software</h2>
+    <h3 class="subsection">Hardware Requirements</h3>
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>Minimum Requirement</th>
+        <th>Recommended</th>
+      </tr>
+      <tr>
+        <td>Processor</td>
+        <td>Intel Core i3 / AMD Ryzen 3</td>
+        <td>Intel Core i5 or above</td>
+      </tr>
+      <tr>
+        <td>RAM</td>
+        <td>4 GB</td>
+        <td>8 GB or above</td>
+      </tr>
+      <tr>
+        <td>Storage</td>
+        <td>20 GB HDD</td>
+        <td>50 GB SSD</td>
+      </tr>
+      <tr>
+        <td>Network</td>
+        <td>Broadband Internet</td>
+        <td>Stable 10 Mbps+</td>
+      </tr>
+      <tr>
+        <td>Display</td>
+        <td>1024×768 resolution</td>
+        <td>1920×1080 Full HD</td>
+      </tr>
+    </table>
+
+    <h3 class="subsection">Software Requirements</h3>
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>Technology / Version</th>
+      </tr>
+      <tr>
+        <td>Operating System</td>
+        <td>Windows 10/11, Linux, or macOS</td>
+      </tr>
+      <tr>
+        <td>Backend Framework</td>
+        <td>ASP.NET Core 8.0 (.NET 8 SDK)</td>
+      </tr>
+      <tr>
+        <td>Frontend</td>
+        <td>HTML5, CSS3, Vanilla JavaScript (ES6+)</td>
+      </tr>
+      <tr>
+        <td>Database</td>
+        <td>MySQL 8.0 (via Pomelo EF Core provider)</td>
+      </tr>
+      <tr>
+        <td>ORM</td>
+        <td>Entity Framework Core 8.0</td>
+      </tr>
+      <tr>
+        <td>Authentication</td>
+        <td>JWT Bearer Tokens (HS256)</td>
+      </tr>
+      <tr>
+        <td>Email Service</td>
+        <td>SMTP via Gmail (System.Net.Mail)</td>
+      </tr>
+      <tr>
+        <td>API Documentation</td>
+        <td>Swagger / OpenAPI 3.0</td>
+      </tr>
+      <tr>
+        <td>Web Browser</td>
+        <td>Google Chrome 110+ / Microsoft Edge</td>
+      </tr>
+      <tr>
+        <td>IDE</td>
+        <td>Microsoft Visual Studio 2026 / VS Code</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ===== CHAPTER 2 ===== -->
+  <div class="page">
+    <h1 class="chapter">Chapter 2: Proposed System</h1>
+
+    <h2 class="section">2.1 Proposed System</h2>
+    <p>The SmartParking Management System is proposed as a comprehensive, cloud-ready, full-stack web application
+      designed to digitalize and automate all aspects of parking spot management. The system operates on a client-server
+      architecture where a RESTful API backend (ASP.NET Core) serves a Single Page Application (SPA) frontend (HTML/JS)
+      through static file serving.</p>
+    <p>The system is structured around three distinct roles:</p>
+    <ul>
+      <li><strong>Admin:</strong> Has unrestricted access to the entire platform. Can manage users, monitor all
+        bookings, and oversee parking spot listings.</li>
+      <li><strong>Host:</strong> Can register their parking facilities, list available spots with pricing and capacity,
+        and view bookings made at their locations.</li>
+      <li><strong>User:</strong> Can search for available parking spots, make time-based reservations, register
+        vehicles, cancel bookings, and reset their password securely.</li>
+    </ul>
+    <p>The proposed system replaces all manual record-keeping with a persistent MySQL database managed through Entity
+      Framework Core. All user sessions are secured via JWT tokens issued at login, with token expiry of 24 hours. All
+      critical events trigger automated email notifications through the integrated Gmail SMTP service, providing an
+      audit trail and improving user trust.</p>
+    <p>The system architecture follows the MVC (Model-View-Controller) pattern on the backend. The frontend communicates
+      exclusively through RESTful JSON APIs, making the system easily extensible to mobile applications in the future.
+    </p>
+
+    <h2 class="section">2.2 Objectives of System</h2>
+    <p>The primary objectives of the SmartParking Management System are as follows:</p>
+    <ol>
+      <li><strong>Digitalize Parking Management:</strong> Eliminate manual, paper-based processes by providing a fully
+        digital platform for listing, searching, booking, and managing parking spots.</li>
+      <li><strong>Prevent Double Booking:</strong> Implement robust conflict detection that checks for overlapping
+        reservations before confirming any new booking, ensuring data integrity.</li>
+      <li><strong>Secure Authentication:</strong> Provide a robust, token-based authentication system with role-based
+        access control to protect sensitive data and restrict unauthorized actions.</li>
+      <li><strong>Real-time Email Notifications:</strong> Automatically notify users via email at every key interaction
+        — account registration, login, booking confirmation, booking cancellation, and password reset.</li>
+      <li><strong>Secure Password Recovery:</strong> Implement a safe, time-limited (15-minute OTP) forgot password flow
+        that delivers a 6-digit confirmation code to the user's registered email.</li>
+      <li><strong>Vehicle Registration:</strong> Allow users to associate vehicles with their profiles, enabling
+        vehicle-specific parking reservations.</li>
+      <li><strong>Multi-role Dashboard:</strong> Provide role-appropriate dashboards for Users (booking history), Hosts
+        (spot and revenue management), and Admins (platform oversight).</li>
+      <li><strong>Scalability:</strong> Build on a robust, industry-standard technology stack (ASP.NET Core + MySQL + EF
+        Core) that can scale to handle thousands of concurrent users.</li>
+    </ol>
+
+    <h2 class="section">2.3 User Requirements</h2>
+    <h3 class="subsection">Functional Requirements</h3>
+    <table>
+      <tr>
+        <th>Req. No.</th>
+        <th>Requirement</th>
+        <th>User Role</th>
+      </tr>
+      <tr>
+        <td>FR-01</td>
+        <td>User shall be able to register with Name, Email, Phone, Password, and Role.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-02</td>
+        <td>System shall send a Welcome email upon successful registration.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-03</td>
+        <td>User shall be able to log in using email and password to receive a JWT token.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-04</td>
+        <td>System shall send a Login Alert email upon every successful login.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-05</td>
+        <td>Host shall be able to add/update/delete parking spots.</td>
+        <td>Host</td>
+      </tr>
+      <tr>
+        <td>FR-06</td>
+        <td>User shall be able to search for available parking spots by name or address.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-07</td>
+        <td>User shall be able to book a parking spot for a specific time range.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-08</td>
+        <td>System shall validate for conflicting bookings before confirming.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-09</td>
+        <td>System shall send a Booking Confirmation email upon successful booking.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-10</td>
+        <td>User shall be able to cancel an active booking.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-11</td>
+        <td>System shall send a Booking Cancellation email upon cancellation.</td>
+        <td>User</td>
+      </tr>
+      <tr>
+        <td>FR-12</td>
+        <td>User shall be able to initiate a Forgot Password flow via email OTP.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-13</td>
+        <td>System shall generate a 6-digit OTP valid for 15 minutes for password reset.</td>
+        <td>All</td>
+      </tr>
+      <tr>
+        <td>FR-14</td>
+        <td>User shall be able to add vehicles to their profile.</td>
+        <td>User</td>
+      </tr>
+    </table>
+
+    <h3 class="subsection">Non-Functional Requirements</h3>
+    <table>
+      <tr>
+        <th>Req. No.</th>
+        <th>Requirement</th>
+      </tr>
+      <tr>
+        <td>NFR-01</td>
+        <td>The system shall respond to any API call within 2 seconds under normal load.</td>
+      </tr>
+      <tr>
+        <td>NFR-02</td>
+        <td>All passwords must meet strong complexity requirements (8+ chars, upper, lower, digit, special).</td>
+      </tr>
+      <tr>
+        <td>NFR-03</td>
+        <td>JWT tokens shall expire after 24 hours to ensure session security.</td>
+      </tr>
+      <tr>
+        <td>NFR-04</td>
+        <td>The system shall be accessible on all modern browsers (Chrome, Edge, Firefox).</td>
+      </tr>
+      <tr>
+        <td>NFR-05</td>
+        <td>The UI shall be fully responsive and usable on desktop screens.</td>
+      </tr>
+      <tr>
+        <td>NFR-06</td>
+        <td>All API endpoints shall be documented via Swagger/OpenAPI.</td>
+      </tr>
+      <tr>
+        <td>NFR-07</td>
+        <td>SMTP email delivery shall not block the main API response thread (fire-and-forget).</td>
+      </tr>
+    </table>
+  </div>
+
+
+
+  <!-- CHAPTER 3 -->
+  <div class="page">
+    <h1 class="chapter">Chapter 3: Analysis &amp; Design</h1>
+
+    <h2 class="section">3.1 Data Flow Diagram (DFD)</h2>
+    <p>The DFD illustrates the flow of data between users, the SmartParking system, and the database. At Level 0, the
+      system accepts inputs from three actors: User, Host, and Admin, and produces outputs such as booking
+      confirmations, email alerts, and dashboard data.</p>
+    <div class="diagram-box">
+      <strong>Level 0 DFD – Context Diagram</strong>
+      <div class="mermaid">
+      graph LR
+        U[User] -->|Input| S(SmartParking System)
+        H[Host] -->|Input| S
+        A[Admin] -->|Input| S
+        S -->|Output| E[Email Service]
+        S -->|Data| DB[(MySQL Database)]
+      </div>
+      <span class="label">Fig 3.1 – Level 0 Context DFD</span>
+    </div>
+      <span class="label">Fig 3.1 – Level 0 Context DFD</span>
+    </div>
+    <p><strong>Level 1 DFD processes:</strong></p>
+    <ul>
+      <li>P1: User Authentication (Register / Login / Forgot Password)</li>
+      <li>P2: Parking Spot Management (Add / Update / Delete Spots)</li>
+      <li>P3: Booking Management (Create / View / Cancel Bookings)</li>
+      <li>P4: Vehicle Management (Add / View Vehicles)</li>
+      <li>P5: Email Notification Dispatch</li>
+    </ul>
+
+    <h2 class="section">3.2 Functional Decomposition Diagram (FDD)</h2>
+    <div class="diagram-box">
+      <strong>Functional Decomposition Diagram</strong>
+      <div class="mermaid">
+      graph TD
+        Root[SmartParking System]
+        Root --> Auth[Authentication Module]
+        Root --> Spot[Parking Spot Module]
+        Root --> Book[Booking Module]
+        Root --> Veh[Vehicle Module]
+        Root --> Mail[Email Notification Module]
+
+        Auth --> A1(Register) & A2(Login) & A3(Forgot Password)
+        Spot --> S1(Add Spot) & S2(List Spots) & S3(Search Spots)
+        Book --> B1(Create Booking) & B2(View Bookings) & B3(Cancel Booking)
+        Veh --> V1(Add Vehicle) & V2(List Vehicles)
+        Mail --> M1(Welcome) & M2(Login Alert) & M3(Booking Confirm)
+      </div>
+      <span class="label">Fig 3.2 – Functional Decomposition Diagram</span>
+    </div>
+      <span class="label">Fig 3.2 – Functional Decomposition Diagram</span>
+    </div>
+
+    <h2 class="section">3.3 UML Diagrams</h2>
+
+    <h3 class="subsection">3.3.1 Class Diagram</h3>
+    <p>The class diagram shows the four core domain models and their relationships.</p>
+    <div class="diagram-box">
+      <strong>Class Diagram</strong>
+      <div class="mermaid">
+      classDiagram
+        class User {
+          +Int Id
+          +String Name
+          +String Email
+          +String Role
+        }
+        class ParkingSpot {
+          +Int Id
+          +String Name
+          +Double Lat
+          +Double Lon
+          +Decimal Price
+        }
+        class Booking {
+          +Int Id
+          +Int UserId
+          +Int ParkingSpotId
+          +String Status
+        }
+        class Vehicle {
+          +Int Id
+          +String Model
+          +String PlateNumber
+        }
+
+        User "1" -- "*" Booking : makes
+        User "1" -- "*" Vehicle : owns
+        ParkingSpot "1" -- "*" Booking : receives
+        Vehicle "1" -- "*" Booking : used in
+      </div>
+      <span class="label">Fig 3.3.1 – Class Diagram</span>
+    </div>
+      <span class="label">Fig 3.3.1 – Class Diagram</span>
+    </div>
+
+    <h3 class="subsection">3.3.2 Object Diagram</h3>
+    <div class="diagram-box">
+      <strong>Object Diagram</strong>
+      <div class="mermaid">
+      classDiagram
+        class `naresh : User` {
+          Id = 5
+          Name = "Naresh"
+          Role = "User"
+        }
+        class `premiumSpot : ParkingSpot` {
+          Id = 2
+          Name = "Premium Spot"
+          Price = 10
+        }
+        class `booking1 : Booking` {
+          Id = 1
+          UserId = 5
+          SpotId = 2
+          Status = "Confirmed"
+        }
+        `naresh : User` --> `booking1 : Booking`
+        `booking1 : Booking` --> `premiumSpot : ParkingSpot`
+      </div>
+      <span class="label">Fig 3.3.2 – Object Diagram (Sample Instance)</span>
+    </div>
+      <span class="label">Fig 3.3.2 – Object Diagram (Sample Instance)</span>
+    </div>
+
+    <h3 class="subsection">3.3.3 Use Case Diagram</h3>
+    <div class="diagram-box">
+      <strong>Use Case Diagram</strong>
+      <div class="mermaid">
+      flowchart LR
+        U((User))
+        O((Owner))
+        A((Admin))
+
+        subgraph SmartParking System
+            direction TB
+            UC1(Register)
+            UC2(Login)
+            UC3(Search Parking)
+            UC4(Add Parking)
+            UC5(View Booking Slot)
+            UC6(Book Parking Slot)
+            UC7(View Booking History)
+            UC8(Manage User)
+            UC9(Manage Host)
+            UC10(Delete Parking)
+        end
+
+        U --> UC1
+        U --> UC2
+        U --> UC3
+        U --> UC6
+        U --> UC7
+
+        O --> UC1
+        O --> UC2
+        O --> UC4
+        O --> UC5
+        O --> UC10
+
+        A --> UC1
+        A --> UC2
+        A --> UC8
+        A --> UC9
+      </div>
+      <span class="label">Fig 3.3.3 – Use Case Diagram</span>
+    </div>
+
+    <h3 class="subsection">3.3.4 Sequence Diagram</h3>
+    <p><strong>Booking Flow Sequence:</strong></p>
+    <div class="diagram-box">
+      <strong>Sequence Diagram (Booking Flow)</strong>
+      <div class="mermaid">
+      sequenceDiagram
+        actor User
+        participant System
+        participant Owner
+        participant ParkingSlot
+
+        User->>System: Search parking
+        System->>ParkingSlot: Check available slot
+        ParkingSlot-->>System: Return slots
+        User->>System: Booking slot
+        System->>ParkingSlot: Saving slot
+        System-->>User: Notification of slot booked
+      </div>
+      <span class="label">Fig 3.3.4 – Booking Sequence Diagram</span>
+    </div>
+
+    <h3 class="subsection">3.3.5 Collaboration Diagram</h3>
+    <div class="diagram-box">
+      <strong>Collaboration Diagram (Registration)</strong>
+      <div class="mermaid">
+      flowchart TD
+        U((User)) -- 1: POST /register --> AC[AuthController]
+        AC -- 2: Add --> DB[(AppDbContext)]
+        AC -- 3: SendEmail --> ES[SmtpEmailService]
+        ES -- 4: SMTP --> G[Gmail Server]
+      </div>
+      <span class="label">Fig 3.3.5 – Collaboration Diagram (Registration)</span>
+    </div>
+      <span class="label">Fig 3.3.5 – Collaboration Diagram (Registration)</span>
+    </div>
+
+    <h3 class="subsection">3.3.6 State Diagram</h3>
+    <div class="diagram-box">
+      <strong>State Diagram (Booking)</strong>
+      <div class="mermaid">
+      stateDiagram-v2
+        [*] --> Pending : Selects time
+        Pending --> Confirmed : Saves
+        Confirmed --> Completed : Time elapsed
+        Confirmed --> Cancelled : User cancels
+        Cancelled --> [*]
+        Completed --> [*]
+      </div>
+      <span class="label">Fig 3.3.6 – Booking State Diagram</span>
+    </div>
+      <span class="label">Fig 3.3.6 – Booking State Diagram</span>
+    </div>
+
+    <h3 class="subsection">3.3.7 Activity Diagram</h3>
+    <div class="diagram-box">
+      <strong>Activity Diagrams</strong>
+      <div class="mermaid">
+      stateDiagram-v2
+        state "User Flow" as UserFlow {
+            [*] --> U_RegisterLogin : Start
+            U_RegisterLogin --> SearchParking
+            SearchParking --> ViewAvailableSlots
+            ViewAvailableSlots --> [*] : No (Logout)
+            ViewAvailableSlots --> BookParkingSlot : Yes
+            BookParkingSlot --> ConfirmBooking
+            ConfirmBooking --> [*]
+        }
+        state "Owner Flow" as OwnerFlow {
+            [*] --> O_RegisterLogin : Start
+            O_RegisterLogin --> RegisterParkingLocation
+            RegisterParkingLocation --> [*] : No (Logout)
+            RegisterParkingLocation --> AddParkingSlots : Yes
+            AddParkingSlots --> UpdateSlotAvailability
+            UpdateSlotAvailability --> ViewBookingSlot
+            ViewBookingSlot --> ViewEarning
+            ViewBookingSlot --> MonitorBookings
+            ViewEarning --> [*]
+            MonitorBookings --> [*] : Continue
+        }
+      </div>
+      <span class="label">Fig 3.3.7 – Activity Diagrams</span>
+    </div>
+
+    <h3 class="subsection">3.3.8 Component Diagram</h3>
+    <div class="diagram-box">
+      <strong>Component Diagram</strong>
+      <div class="mermaid">
+      flowchart TD
+        WP[Web Portal<br>C#, ASP.NET]
+
+        subgraph Modules
+            UM[User Module<br>- Search Parking<br>- Confirm Parking]
+            OM[Owner Module<br>- Add Slots<br>- Add Location<br>- View History]
+            AM[Admin Module<br>- Manages System]
+        end
+
+        WP -- "uses" --> UM
+        WP -- "uses" --> OM
+        WP -- "uses" --> AM
+
+        DB[(Database Layer<br>MySQL Database)]
+
+        UM --> DB
+        OM --> DB
+        AM --> DB
+      </div>
+      <span class="label">Fig 3.3.8 – Component Diagram</span>
+    </div>
+
+    <h3 class="subsection">3.3.9 Deployment Diagram</h3>
+    <div class="diagram-box">
+      <strong>Deployment Diagram</strong>
+      <div class="mermaid">
+      flowchart TD
+        subgraph ClientDevice [Client Device]
+            direction TB
+            B[Web Browser]
+            U1[User: Vehicle Owner]
+            U2[Admin]
+            U3[Host / Owner]
+        end
+
+        subgraph WebServer [Web Server]
+            direction TB
+            WA[ASP.NET Web App]
+            UI[User Interface]
+        end
+
+        subgraph AppServer [Application Server]
+            direction TB
+            C[C# API Services]
+            Auth[Authentication]
+            BP[Booking Parking]
+            SA[Slot Availability]
+        end
+
+        subgraph DBServer [Database Server]
+            DB[(MySQL Database)]
+        end
+
+        ClientDevice -- "HTTP/HTTPS" --> WebServer
+        WebServer -- "API CALLS" --> AppServer
+        AppServer -- "Database Connection" --> DBServer
+      </div>
+      <span class="label">Fig 3.3.9 – Deployment Diagram</span>
+    </div>
+  </div>
+
+  <div class="page">
+    <h2 class="section">3.4 Entity Relationship Diagram (ERD)</h2>
+    <div class="diagram-box">
+      <strong>Entity Relationship Diagram</strong>
+      <div class="mermaid">
+      erDiagram
+        USER ||--o{ BOOKING : makes
+        USER ||--o{ VEHICLE : owns
+        USER ||--o{ NOTIFICATION : receives
+        ADMIN ||--o{ USER : manages
+        ADMIN ||--o{ BOOKING : verifies
+        ADMIN ||--o{ PARKING_LOCATION : monitors
+        OWNER ||--o{ PARKING_LOCATION : adds
+        BOOKING ||--|| VEHICLE : tracks
+        BOOKING ||--|| ENTRY_EXIT : has
+        
+        USER {
+            int user_id PK
+            string name
+            string email
+            string phone_no
+        }
+        ADMIN {
+            int admin_id PK
+            string name
+            string email
+            string password
+        }
+        OWNER {
+            int owner_id PK
+            string name
+            string email
+            string phone_no
+        }
+        VEHICLE {
+            int vehicle_id PK
+            int user_id FK
+            string vehicle_no
+        }
+        BOOKING {
+            int booking_id PK
+            int user_id FK
+            int vehicle_id FK
+            string booking_status
+        }
+        PARKING_LOCATION {
+            int slot_id PK
+            string location
+            string slot_number
+            decimal price_per_hour
+        }
+        ENTRY_EXIT {
+            int booking_id FK
+            datetime entry_time
+            datetime exit_time
+        }
+        NOTIFICATION {
+            int id PK
+            string message
+        }
+      </div>
+      <span class="label">Fig 3.4 – Entity Relationship Diagram</span>
+    </div>
+
+    <h2 class="section">3.5 Data Dictionary</h2>
+    <table>
+      <tr>
+        <th>Table</th>
+        <th>Column</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>Id</td>
+        <td>INT PK</td>
+        <td>Auto-increment primary key</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>Name</td>
+        <td>LONGTEXT</td>
+        <td>Full name of user</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>Email</td>
+        <td>LONGTEXT</td>
+        <td>Unique email address</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>PhoneNumber</td>
+        <td>LONGTEXT</td>
+        <td>Contact number</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>PasswordHash</td>
+        <td>LONGTEXT</td>
+        <td>Password (plaintext in demo; hash in production)</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>Role</td>
+        <td>LONGTEXT</td>
+        <td>User | Host | Admin</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>ResetPasswordToken</td>
+        <td>LONGTEXT NULL</td>
+        <td>6-digit OTP for password reset</td>
+      </tr>
+      <tr>
+        <td>Users</td>
+        <td>ResetPasswordExpiry</td>
+        <td>DATETIME NULL</td>
+        <td>OTP expiry (15 min from generation)</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>Id</td>
+        <td>INT PK</td>
+        <td>Auto-increment primary key</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>Name</td>
+        <td>LONGTEXT</td>
+        <td>Name of the parking location</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>Address</td>
+        <td>LONGTEXT</td>
+        <td>Physical address</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>Latitude</td>
+        <td>DOUBLE</td>
+        <td>GPS latitude</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>Longitude</td>
+        <td>DOUBLE</td>
+        <td>GPS longitude</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>PricePerHour</td>
+        <td>DECIMAL(18,2)</td>
+        <td>Hourly rate in INR</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>TotalCapacity</td>
+        <td>INT</td>
+        <td>Total number of parking slots</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>AvailableSpots</td>
+        <td>INT</td>
+        <td>Currently available slots</td>
+      </tr>
+      <tr>
+        <td>ParkingSpots</td>
+        <td>HostId</td>
+        <td>INT FK</td>
+        <td>References Users.Id (Host)</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>Id</td>
+        <td>INT PK</td>
+        <td>Auto-increment primary key</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>UserId</td>
+        <td>INT FK</td>
+        <td>References Users.Id</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>ParkingSpotId</td>
+        <td>INT FK</td>
+        <td>References ParkingSpots.Id</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>VehicleId</td>
+        <td>INT FK NULL</td>
+        <td>References Vehicles.Id</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>StartTime</td>
+        <td>DATETIME</td>
+        <td>Booking start date/time</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>EndTime</td>
+        <td>DATETIME</td>
+        <td>Booking end date/time</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>TotalPrice</td>
+        <td>DECIMAL(18,2)</td>
+        <td>Calculated total cost</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>Status</td>
+        <td>LONGTEXT</td>
+        <td>Pending | Confirmed | Completed | Cancelled</td>
+      </tr>
+      <tr>
+        <td>Bookings</td>
+        <td>SlotNumber</td>
+        <td>LONGTEXT NULL</td>
+        <td>Auto-assigned slot (e.g. A-123)</td>
+      </tr>
+      <tr>
+        <td>Vehicles</td>
+        <td>Id</td>
+        <td>INT PK</td>
+        <td>Auto-increment primary key</td>
+      </tr>
+      <tr>
+        <td>Vehicles</td>
+        <td>UserId</td>
+        <td>INT FK</td>
+        <td>References Users.Id</td>
+      </tr>
+      <tr>
+        <td>Vehicles</td>
+        <td>Model</td>
+        <td>LONGTEXT</td>
+        <td>Vehicle model name</td>
+      </tr>
+      <tr>
+        <td>Vehicles</td>
+        <td>Color</td>
+        <td>LONGTEXT</td>
+        <td>Vehicle color</td>
+      </tr>
+      <tr>
+        <td>Vehicles</td>
+        <td>PlateNumber</td>
+        <td>LONGTEXT</td>
+        <td>Registration plate number</td>
+      </tr>
+    </table>
+
+    <h2 class="section">3.6 Table Design</h2>
+    <p class="table-caption">Table 3.6.1 – Users Table</p>
+    <table>
+      <tr>
+        <th>Column</th>
+        <th>Type</th>
+        <th>Constraints</th>
+      </tr>
+      <tr>
+        <td>Id</td>
+        <td>INT</td>
+        <td>PRIMARY KEY, AUTO_INCREMENT</td>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td>LONGTEXT</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td>LONGTEXT</td>
+        <td>NOT NULL, UNIQUE</td>
+      </tr>
+      <tr>
+        <td>PhoneNumber</td>
+        <td>LONGTEXT</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>PasswordHash</td>
+        <td>LONGTEXT</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>Role</td>
+        <td>LONGTEXT</td>
+        <td>DEFAULT 'User'</td>
+      </tr>
+      <tr>
+        <td>ResetPasswordToken</td>
+        <td>LONGTEXT</td>
+        <td>NULL</td>
+      </tr>
+      <tr>
+        <td>ResetPasswordExpiry</td>
+        <td>DATETIME(6)</td>
+        <td>NULL</td>
+      </tr>
+    </table>
+
+    <p class="table-caption">Table 3.6.2 – Bookings Table</p>
+    <table>
+      <tr>
+        <th>Column</th>
+        <th>Type</th>
+        <th>Constraints</th>
+      </tr>
+      <tr>
+        <td>Id</td>
+        <td>INT</td>
+        <td>PRIMARY KEY, AUTO_INCREMENT</td>
+      </tr>
+      <tr>
+        <td>UserId</td>
+        <td>INT</td>
+        <td>FK → Users.Id</td>
+      </tr>
+      <tr>
+        <td>ParkingSpotId</td>
+        <td>INT</td>
+        <td>FK → ParkingSpots.Id</td>
+      </tr>
+      <tr>
+        <td>VehicleId</td>
+        <td>INT</td>
+        <td>FK → Vehicles.Id, NULL</td>
+      </tr>
+      <tr>
+        <td>StartTime</td>
+        <td>DATETIME(6)</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>EndTime</td>
+        <td>DATETIME(6)</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>TotalPrice</td>
+        <td>DECIMAL(18,2)</td>
+        <td>NOT NULL</td>
+      </tr>
+      <tr>
+        <td>Status</td>
+        <td>LONGTEXT</td>
+        <td>DEFAULT 'Pending'</td>
+      </tr>
+      <tr>
+        <td>SlotNumber</td>
+        <td>LONGTEXT</td>
+        <td>NULL</td>
+      </tr>
+    </table>
+
+    <h2 class="section">3.7 Code Design</h2>
+    <p>The project is organized using a layered architecture. The <strong>Models</strong> layer defines entity classes
+      mapped to MySQL tables. The <strong>Data</strong> layer contains <code>AppDbContext</code> which manages EF Core
+      operations. The <strong>Controllers</strong> layer handles HTTP requests and business logic. The
+      <strong>Services</strong> layer contains the <code>IEmailService</code> abstraction and
+      <code>SmtpEmailService</code> implementation. The <strong>DTOs</strong> layer provides request/response shape
+      contracts separate from domain models.</p>
+    <pre>SmartParking.Server/
+├── Controllers/
+│   ├── AuthController.cs       # Register, Login, ForgotPassword, ResetPassword
+│   ├── BookingController.cs    # CreateBooking, CancelBooking, GetUserBookings
+│   ├── ParkingController.cs    # CRUD for ParkingSpots
+│   ├── VehicleController.cs    # Add/List Vehicles
+│   └── AdminController.cs      # Admin operations
+├── Models/
+│   ├── User.cs, Booking.cs, ParkingSpot.cs, Vehicle.cs
+├── Data/
+│   └── AppDbContext.cs         # EF Core DbContext
+├── Services/
+│   ├── IEmailService.cs
+│   └── SmtpEmailService.cs     # Gmail SMTP implementation
+├── Dtos/
+│   └── AuthDtos.cs, BookingDtos.cs, ParkingDtos.cs ...
+└── Program.cs                  # DI, Middleware, JWT, Swagger config</pre>
+  </div>
+
+  <!-- CHAPTER 4 -->
+  <div class="page">
+    <h1 class="chapter">Chapter 4: User Manual</h1>
+
+    <h2 class="section">4.1 Operations Manual / Menu Explanation</h2>
+    <p>The SmartParking application is accessible at <strong>http://localhost:8000/index.html</strong>. The navigation
+      bar at the top provides access to all major sections.</p>
+    <table>
+      <tr>
+        <th>Menu Item</th>
+        <th>Role</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>Find Spots</td>
+        <td>All</td>
+        <td>Browse and search available parking spots on the map view</td>
+      </tr>
+      <tr>
+        <td>Dashboard</td>
+        <td>Logged In</td>
+        <td>View personal bookings, vehicles, and account info</td>
+      </tr>
+      <tr>
+        <td>Login / Register</td>
+        <td>Guest</td>
+        <td>Open the split-screen authentication modal</td>
+      </tr>
+      <tr>
+        <td>Logout</td>
+        <td>Logged In</td>
+        <td>Clear session token and return to homepage</td>
+      </tr>
+    </table>
+
+    <h3 class="subsection">Authentication Flow</h3>
+    <ol>
+      <li>Click <strong>Login</strong> in the top-right navbar.</li>
+      <li>A split-screen modal appears — parking illustration on the left, form on the right.</li>
+      <li>To register: click <em>Create Account</em> tab. Fill Name, Email, Phone, Password, Role. Click <em>Create
+          Account</em>. A Welcome email is sent automatically.</li>
+      <li>To login: enter Email and Password, click <em>Sign In</em>. A Login Alert email is sent.</li>
+      <li>To reset password: click <em>Forgot Password?</em>, enter email, receive 6-digit OTP by email, enter OTP + New
+        Password + Confirm Password, click <em>Confirm Password Reset</em>.</li>
+    </ol>
+
+    <h3 class="subsection">Booking Flow</h3>
+    <ol>
+      <li>Navigate to <strong>Find Spots</strong>. Use the search bar to filter by name or address.</li>
+      <li>Click <strong>Book Now</strong> on a spot card.</li>
+      <li>Add a vehicle if none is registered. Select start and end times.</li>
+      <li>Click <strong>Confirm Booking</strong>. A Booking Confirmation email is dispatched.</li>
+      <li>To cancel: go to Dashboard → My Bookings → click <strong>Cancel</strong> → confirm. A Cancellation email is
+        sent.</li>
+    </ol>
+
+    <h3 class="subsection">Host Operations</h3>
+    <ol>
+      <li>Register/Login as <strong>Host</strong>.</li>
+      <li>On the Dashboard, click <strong>+ Add Spot</strong>.</li>
+      <li>Fill in spot name, address, price per hour, and capacity. Save.</li>
+      <li>View all bookings made at your spots in the <em>Host Bookings</em> section.</li>
+    </ol>
+
+    <h2 class="section">4.2 Menu Screens</h2>
+    <p>Below is a description of the key screens in the application:</p>
+    <table>
+      <tr>
+        <th>Screen</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>Home / Hero Page</td>
+        <td>Landing page with SmartParking branding, navigation bar, and Call-to-Action buttons</td>
+      </tr>
+      <tr>
+        <td>Login Modal</td>
+        <td>Split-screen modal: parking illustration (left), Login/Register tabs (right)</td>
+      </tr>
+      <tr>
+        <td>Register Form</td>
+        <td>Fields: Name, Email, Phone, Password, Role (dropdown: User/Host)</td>
+      </tr>
+      <tr>
+        <td>Forgot Password</td>
+        <td>Email input → Submit → UI morphs to OTP + New Password + Confirm Password form</td>
+      </tr>
+      <tr>
+        <td>Find Spots Page</td>
+        <td>Search bar + grid of parking spot cards with Book Now button</td>
+      </tr>
+      <tr>
+        <td>Booking Modal</td>
+        <td>Vehicle selector, start/end datetime pickers, price summary, Confirm button</td>
+      </tr>
+      <tr>
+        <td>User Dashboard</td>
+        <td>Welcome banner, My Vehicles panel (+ Add Car), My Bookings panel with Cancel option</td>
+      </tr>
+      <tr>
+        <td>Host Dashboard</td>
+        <td>My Parking Spots panel (+ Add Spot), Spot management controls</td>
+      </tr>
+      <tr>
+        <td>Admin Dashboard</td>
+        <td>Platform-level user and booking management interface</td>
+      </tr>
+    </table>
+
+    <h2 class="section">4.3 Project Code</h2>
+    <h3 class="subsection">AuthController – Register Endpoint</h3>
+    <pre>[HttpPost("register")]
+public async Task&lt;IActionResult&gt; Register(RegisterDto dto)
+{
+    if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+        return BadRequest("Email already exists.");
+
+    if (!Regex.IsMatch(dto.Password,
+        @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$"))
+        return BadRequest("Password does not meet complexity requirements.");
+
+    var user = new User {
+        Name = dto.Name, Email = dto.Email,
+        PhoneNumber = dto.PhoneNumber,
+        PasswordHash = dto.Password, Role = dto.Role
+    };
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();
+
+    _ = _emailService.SendEmailAsync(user.Email, "Welcome to SmartParking!",
+        $"&lt;h1&gt;Welcome, {user.Name}!&lt;/h1&gt;&lt;p&gt;Your account is now active.&lt;/p&gt;");
+
+    return Ok("User registered successfully.");
+}</pre>
+
+    <h3 class="subsection">AuthController – Forgot Password Endpoint</h3>
+    <pre>[HttpPost("forgot-password")]
+public async Task&lt;IActionResult&gt; ForgotPassword(ForgotPasswordDto dto)
+{
+    var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.Email == dto.Email);
+    if (user == null) return NotFound("Email not found.");
+
+    var code = new Random().Next(100000, 999999).ToString();
+    user.ResetPasswordToken = code;
+    user.ResetPasswordExpiry = DateTime.Now.AddMinutes(15);
+    await _context.SaveChangesAsync();
+
+    _ = _emailService.SendEmailAsync(user.Email,
+        "SmartParking Password Reset Code",
+        $"&lt;h2&gt;Your code: &lt;strong&gt;{code}&lt;/strong&gt;&lt;/h2&gt;" +
+        "&lt;p&gt;Valid for 15 minutes.&lt;/p&gt;");
+
+    return Ok("Password reset code sent to your email.");
+}</pre>
+
+    <h3 class="subsection">BookingController – Create Booking</h3>
+    <pre>[Authorize]
+[HttpPost]
+public async Task&lt;IActionResult&gt; CreateBooking(CreateBookingDto dto)
+{
+    var spot = await _context.ParkingSpots.FindAsync(dto.ParkingSpotId);
+    if (spot == null) return BadRequest("Spot not found.");
+
+    var overlap = await _context.Bookings
+        .Where(b => b.ParkingSpotId == dto.ParkingSpotId
+                 &amp;&amp; b.Status != "Cancelled"
+                 &amp;&amp; dto.StartTime &lt; b.EndTime
+                 &amp;&amp; b.StartTime &lt; dto.EndTime)
+        .FirstOrDefaultAsync();
+
+    if (overlap != null)
+        return BadRequest("Spot already booked for this time range.");
+
+    var booking = new Booking {
+        UserId = dto.UserId, ParkingSpotId = dto.ParkingSpotId,
+        StartTime = dto.StartTime, EndTime = dto.EndTime,
+        TotalPrice = dto.TotalPrice, Status = "Confirmed",
+        SlotNumber = "A-" + new Random().Next(100, 999)
+    };
+    _context.Bookings.Add(booking);
+    await _context.SaveChangesAsync();
+
+    var user = await _context.Users.FindAsync(dto.UserId);
+    if (user != null)
+        await _emailService.SendEmailAsync(user.Email,
+            "SmartParking Reservation Confirmed",
+            $"&lt;p&gt;Slot {booking.SlotNumber} at {spot.Name} confirmed!&lt;/p&gt;");
+
+    return Ok(booking);
+}</pre>
+
+    <h3 class="subsection">SmtpEmailService</h3>
+    <pre>public async Task SendEmailAsync(string toEmail, string subject, string body)
+{
+    var mailMessage = new MailMessage {
+        From = new MailAddress(fromEmail),
+        Subject = subject, Body = body, IsBodyHtml = true
+    };
+    mailMessage.To.Add(toEmail);
+    using var smtpClient = new SmtpClient(host, port) {
+        Credentials = new NetworkCredential(username, password),
+        EnableSsl = true
+    };
+    await smtpClient.SendMailAsync(mailMessage);
+}</pre>
+  </div>
+
+  <!-- CHAPTER 5 -->
+  <div class="page">
+    <h1 class="chapter">Chapter 5: Testing</h1>
+
+    <h2 class="section">5.1 Testing Test Plan</h2>
+    <p>The SmartParking system underwent structured testing across three levels: unit testing of individual API
+      endpoints, integration testing of the database and email service interactions, and end-to-end (E2E) browser
+      testing using an automated Chrome subagent.</p>
+    <table>
+      <tr>
+        <th>Test Level</th>
+        <th>Scope</th>
+        <th>Tools Used</th>
+      </tr>
+      <tr>
+        <td>Unit Testing</td>
+        <td>Individual controller methods</td>
+        <td>PowerShell Invoke-RestMethod, Swagger UI</td>
+      </tr>
+      <tr>
+        <td>Integration Testing</td>
+        <td>API + MySQL + SMTP email chain</td>
+        <td>Custom PowerShell test script (SendTestEmails.ps1)</td>
+      </tr>
+      <tr>
+        <td>E2E Browser Testing</td>
+        <td>Full UI flow via Chrome</td>
+        <td>Automated Chrome Browser Subagent</td>
+      </tr>
+    </table>
+
+    <h2 class="section">5.2 Black Box Testing – Data Validation</h2>
+    <p>Black box tests validate that the system correctly handles valid and invalid inputs at each endpoint without
+      knowledge of internal implementation.</p>
+    <table>
+      <tr>
+        <th>Test ID</th>
+        <th>Input</th>
+        <th>Expected Output</th>
+        <th>Result</th>
+      </tr>
+      <tr>
+        <td>BB-01</td>
+        <td>Register with weak password "abc"</td>
+        <td>400 – Password complexity error</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-02</td>
+        <td>Register with duplicate email</td>
+        <td>400 – Email already exists</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-03</td>
+        <td>Login with incorrect password</td>
+        <td>401 – Unauthorized</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-04</td>
+        <td>Book spot without JWT token</td>
+        <td>401 – Unauthorized</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-05</td>
+        <td>Book spot for overlapping time</td>
+        <td>400 – Already booked</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-06</td>
+        <td>Cancel another user's booking</td>
+        <td>401 – Unauthorized</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-07</td>
+        <td>Forgot password with unknown email</td>
+        <td>404 – Email not found</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-08</td>
+        <td>Reset password with expired OTP</td>
+        <td>400 – Code expired</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-09</td>
+        <td>Reset password with wrong OTP</td>
+        <td>400 – Invalid code</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>BB-10</td>
+        <td>Search spots with valid query</td>
+        <td>200 – Matching spot list</td>
+        <td>PASS</td>
+      </tr>
+    </table>
+
+    <h2 class="section">5.3 White Box Testing – Functional Validation</h2>
+    <p>White box tests validate internal logic paths, branch conditions, and code correctness.</p>
+    <table>
+      <tr>
+        <th>Test ID</th>
+        <th>Code Path Tested</th>
+        <th>Expected Behavior</th>
+        <th>Result</th>
+      </tr>
+      <tr>
+        <td>WB-01</td>
+        <td>Regex password validation branch</td>
+        <td>Reject passwords without uppercase/digit/special char</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-02</td>
+        <td>JWT token generation (GenerateJwtToken)</td>
+        <td>Token contains NameIdentifier, Name, Email, Role claims</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-03</td>
+        <td>Overlap check LINQ query</td>
+        <td>Correctly detects time-range conflicts</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-04</td>
+        <td>OTP expiry check (DateTime.Now &lt; ResetPasswordExpiry)</td>
+        <td>Reject OTP past 15 min window</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-05</td>
+        <td>Fire-and-forget email dispatch (_= SendEmailAsync)</td>
+        <td>Email sent without blocking API response</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-06</td>
+        <td>EF Core auto-migration (ALTER TABLE try/catch)</td>
+        <td>Safely adds new columns without crashing on re-run</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>WB-07</td>
+        <td>JSON cycle reference handler (IgnoreCycles)</td>
+        <td>No circular reference exception on Booking serialization</td>
+        <td>PASS</td>
+      </tr>
+    </table>
+
+    <h2 class="section">5.4 Test Cases and Results</h2>
+    <table>
+      <tr>
+        <th>TC No.</th>
+        <th>Test Case</th>
+        <th>Steps</th>
+        <th>Expected</th>
+        <th>Actual</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td>TC-01</td>
+        <td>User Registration</td>
+        <td>POST /api/Auth/register with valid data</td>
+        <td>201 + Welcome email</td>
+        <td>200 OK + email delivered</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-02</td>
+        <td>User Login</td>
+        <td>POST /api/Auth/login with correct credentials</td>
+        <td>200 + JWT token</td>
+        <td>200 OK + token returned</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-03</td>
+        <td>Forgot Password Email</td>
+        <td>POST /api/Auth/forgot-password</td>
+        <td>200 + 6-digit OTP in email</td>
+        <td>OTP received in Gmail</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-04</td>
+        <td>Reset Password</td>
+        <td>POST /api/Auth/reset-password with valid OTP</td>
+        <td>200 + password updated</td>
+        <td>Password reset success</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-05</td>
+        <td>Add Parking Spot (Host)</td>
+        <td>POST /api/ParkingSpots with Host JWT</td>
+        <td>200 + spot saved in DB</td>
+        <td>Spot created successfully</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-06</td>
+        <td>Search Spots</td>
+        <td>GET /api/ParkingSpots/search?query=Premium</td>
+        <td>200 + matching spots</td>
+        <td>Correct results returned</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-07</td>
+        <td>Create Booking</td>
+        <td>POST /api/Booking with valid JWT + spot</td>
+        <td>200 + booking confirmed + email</td>
+        <td>Booking created, email sent</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-08</td>
+        <td>View My Bookings</td>
+        <td>GET /api/Booking/user/{id}</td>
+        <td>200 + booking list</td>
+        <td>Bookings listed correctly</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-09</td>
+        <td>Cancel Booking</td>
+        <td>DELETE /api/Booking/{id} with owner JWT</td>
+        <td>200 + status Cancelled + email</td>
+        <td>Cancelled, email delivered</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-10</td>
+        <td>Add Vehicle</td>
+        <td>POST /api/Vehicle with User JWT</td>
+        <td>200 + vehicle saved</td>
+        <td>Vehicle registered</td>
+        <td>PASS</td>
+      </tr>
+      <tr>
+        <td>TC-11</td>
+        <td>Chrome E2E Full Flow</td>
+        <td>Automated browser: register Host → add spot → register User → book → cancel → forgot password</td>
+        <td>All 4 emails received</td>
+        <td>All emails delivered to naresh9799612951@gmail.com</td>
+        <td>PASS</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- CHAPTER 6 -->
+  <div class="page">
+    <h1 class="chapter">Chapter 6: Limitations and Enhancement</h1>
+
+    <h2 class="section">6.1 Drawbacks and Limitations</h2>
+    <ul>
+      <li><strong>Plain-text Password Storage:</strong> In the current implementation, passwords are stored as plain
+        text in the <code>PasswordHash</code> field. A production system must use a cryptographic hash (e.g., BCrypt or
+        Argon2).</li>
+      <li><strong>No Payment Integration:</strong> The system calculates total prices but does not integrate with any
+        payment gateway (Razorpay, Stripe, etc.). Users confirm bookings without online payment.</li>
+      <li><strong>No Real-time Slot Availability:</strong> Spot availability is calculated based on bookings, but there
+        is no WebSocket-based live update when another user takes a spot simultaneously.</li>
+      <li><strong>Single Server Deployment:</strong> The application is designed for local deployment (localhost:8000).
+        Cloud deployment (Azure, AWS, Render) with HTTPS, load balancing, and auto-scaling is not yet configured.</li>
+      <li><strong>No Mobile Application:</strong> The frontend is web-only. Native iOS and Android apps are not yet
+        developed.</li>
+      <li><strong>Manual GPS Coordinates:</strong> Hosts must manually enter latitude/longitude. Integration with Google
+        Maps Places API for auto-fill is not yet implemented.</li>
+      <li><strong>No OTP Rate Limiting:</strong> The forgot-password OTP endpoint does not implement rate limiting,
+        making it theoretically susceptible to spam requests.</li>
+      <li><strong>No Push Notifications:</strong> Email is the only notification channel. SMS (Twilio) and web push
+        notifications are not yet integrated.</li>
+    </ul>
+
+    <h2 class="section">6.2 Proposed Enhancements</h2>
+    <ul>
+      <li><strong>BCrypt Password Hashing:</strong> Replace plain-text storage with BCrypt to meet industry security
+        standards.</li>
+      <li><strong>Razorpay / Stripe Payment Gateway:</strong> Integrate online payment collection at booking
+        confirmation to enable a complete transactional flow.</li>
+      <li><strong>WebSocket Live Updates:</strong> Use SignalR to push real-time parking spot availability updates to
+        all connected clients simultaneously.</li>
+      <li><strong>Google Maps API Integration:</strong> Auto-populate GPS coordinates and display parking spots on an
+        interactive map with visual markers.</li>
+      <li><strong>Mobile App (React Native / Flutter):</strong> Develop cross-platform mobile apps that consume the
+        existing REST API backend.</li>
+      <li><strong>OTP Rate Limiting &amp; CAPTCHA:</strong> Add rate limiting (5 requests/hour per IP) to the
+        forgot-password endpoint and integrate reCAPTCHA.</li>
+      <li><strong>IoT Hardware Integration:</strong> Connect the system to physical barrier gates and sensors at parking
+        entrances for automated vehicle detection and entry/exit logging.</li>
+      <li><strong>Analytics Dashboard:</strong> Provide hosts and admins with revenue analytics, peak hour heatmaps, and
+        occupancy trend charts.</li>
+      <li><strong>Multi-language Support:</strong> Implement i18n/l10n for Hindi, Marathi, and other regional languages
+        to serve a broader user base.</li>
+      <li><strong>Cloud Deployment:</strong> Deploy on Azure App Service with Azure MySQL Flexible Server, HTTPS SSL
+        certificate, and CI/CD via GitHub Actions.</li>
+    </ul>
+
+    <h2 class="section">6.3 Conclusions</h2>
+    <p>The SmartParking Management System successfully demonstrates the design and implementation of a modern,
+      full-stack web application that addresses a real-world urban problem. The project delivers a complete, working
+      solution that covers the entire parking lifecycle — from spot discovery and reservation to cancellation and
+      password management — all with automated email notifications at every step.</p>
+    <p>The system was built on a robust, industry-standard technology stack: ASP.NET Core 8.0 for the backend API,
+      Entity Framework Core with MySQL for persistent storage, JWT-based authentication for secure sessions, and Gmail
+      SMTP for transactional emails. The frontend, built with vanilla HTML, CSS, and JavaScript, provides a premium,
+      responsive user experience without relying on heavy frameworks.</p>
+    <p>All key functional requirements were implemented and validated through rigorous black-box, white-box, and
+      end-to-end Chrome browser tests. The automated test suite confirmed that all 11 test cases passed successfully,
+      including a live E2E test that delivered four distinct emails to a real Gmail inbox, proving the system's
+      production readiness.</p>
+    <p>This project provided invaluable hands-on experience in REST API design, relational database modeling, JWT
+      security, SMTP email integration, and frontend-backend integration. The modular architecture ensures that the
+      planned enhancements — payment gateways, IoT integration, and cloud deployment — can be layered on top of the
+      existing codebase with minimal refactoring.</p>
+    <p>SmartParking is a solid foundation for a commercially viable parking management product that can scale to serve
+      smart cities, malls, hospitals, and corporate campuses.</p>
+
+    <h2 class="section">6.4 Bibliography</h2>
+    <ol>
+      <li>Microsoft Docs. <em>ASP.NET Core documentation.</em> https://learn.microsoft.com/en-us/aspnet/core</li>
+      <li>Microsoft Docs. <em>Entity Framework Core.</em> https://learn.microsoft.com/en-us/ef/core/</li>
+      <li>JWT.io. <em>JSON Web Tokens – Introduction.</em> https://jwt.io/introduction</li>
+      <li>Pomelo Foundation. <em>Pomelo.EntityFrameworkCore.MySql.</em>
+        https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql</li>
+      <li>Google. <em>Gmail SMTP settings for sending email.</em> https://support.google.com/mail/answer/7126229</li>
+      <li>Mozilla Developer Network. <em>HTML, CSS, JavaScript Reference.</em> https://developer.mozilla.org</li>
+      <li>Swashbuckle. <em>Swashbuckle.AspNetCore – Swagger for .NET.</em>
+        https://github.com/domaindrivendev/Swashbuckle.AspNetCore</li>
+      <li>MySQL. <em>MySQL 8.0 Reference Manual.</em> https://dev.mysql.com/doc/refman/8.0/en/</li>
+      <li>OWASP. <em>OWASP Top Ten Web Application Security Risks.</em> https://owasp.org/www-project-top-ten/</li>
+      <li>W3Schools. <em>Web Development Tutorials.</em> https://www.w3schools.com</li>
+    </ol>
+    <br><br>
+    <p style="text-align:center; font-style:italic; color:#666;">--- End of Report ---</p>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</body>
+
+
+</html>

@@ -1,0 +1,174 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SmartParking.Server.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+// Database Configuration
+// Prefer MySQL if a connection string is provided; otherwise fall back to In-Memory DB
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    // If the connection string explicitly contains an empty password, avoid attempting AutoDetect
+    // which will try to open a connection and fail. Fall back to InMemory in that case.
+    var csLower = connectionString.ToLowerInvariant();
+    var pwdEmpty = false;
+    if (csLower.Contains("password=") || csLower.Contains("pwd="))
+    {
+        var m = System.Text.RegularExpressions.Regex.Match(connectionString, "(?:password|pwd)\\s*=\\s*([^;]*)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+            pwdEmpty = string.IsNullOrEmpty(m.Groups[1].Value);
+        }
+    }
+
+    if (pwdEmpty)
+    {
+        Console.WriteLine("Warning: DefaultConnection contains an empty password. Falling back to InMemory DB. Update appsettings.json with valid MySQL credentials to use MySQL.");
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseInMemoryDatabase("SmartParkingDb"));
+    }
+    else
+    {
+        try
+        {
+            var serverVersion = ServerVersion.AutoDetect(connectionString);
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(connectionString, serverVersion));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not connect to MySQL ({ex.Message}). Falling back to InMemory DB.");
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseInMemoryDatabase("SmartParkingDb"));
+        }
+    }
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("SmartParkingDb"));
+}
+
+// Seed Data (Create Admin User)
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.EnsureCreated();
+    
+    if (!context.Users.Any())
+    {
+        context.Users.Add(new SmartParking.Server.Models.User
+        {
+            Name = "System Admin",
+            Email = "admin@smartparking.com",
+            PasswordHash = "admin123", // In real app, hash this!
+            Role = "Admin"
+        });
+        context.SaveChanges();
+    }
+
+    // Seed Parking Spots
+    // REMOVED: Database starts with 0 locations. Host must add them dynamically.
+}
+
+// Authentication Configuration
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
+builder.Services.AddScoped<SmartParking.Server.Services.IEmailService, SmartParking.Server.Services.SmtpEmailService>();
+
+builder.Services.AddCors();
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Smart Parking API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+var app = builder.Build();
+
+// Ensure the server binds to port 8000 in development/run-from-IDE scenarios
+builder.WebHost.UseUrls("http://localhost:8000");
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// app.UseHttpsRedirection();
+
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+var summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+app.MapGet("/weatherforecast", () =>
+{
+    var forecast =  Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast");
+
+app.Run();
+
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}

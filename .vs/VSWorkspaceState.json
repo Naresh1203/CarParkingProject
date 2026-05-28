@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\SmartParking.Server\\bin",
+    "\\SmartParking.Server\\bin\\Debug",
+    "\\SmartParking.Server\\bin\\Release",
+    "\\SmartParking.Server\\Controllers",
+    "\\SmartParking.Server\\Data",
+    "\\SmartParking.Server\\Dtos",
+    "\\SmartParking.Server\\Models",
+    "\\SmartParking.Web"
+  ],
+  "SelectedNode": "\\SmartParking.slnx",
+  "PreviewInSolutionExplorer": false
+}

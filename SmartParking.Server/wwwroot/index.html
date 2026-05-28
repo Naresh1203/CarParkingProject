@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Parking</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand" style="cursor: pointer;" onclick="showPage('home')">
+            <img src="logo.png?v=4" alt="SmartParking Logo"> SmartParking
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#" class="active" onclick="showPage('home')" id="navHome">Find Spots</a>
+            <a href="#" onclick="showPage('login')" id="navLogin">Login</a>
+            <div class="user-menu" id="userMenu" style="display: none;">
+                <span id="userNameDisplay">User</span>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app-content">
+        <!-- Views will be injected here -->
+    </main>
+
+    <!-- Google Maps script added without an key for demo purposes. -->
+    <script src="https://maps.googleapis.com/maps/api/js?loading=async&libraries=geometry&callback=initMap" async defer></script>
+    <!-- Tesseract.js for Client-Side Machine Learning OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- Open Location Code (Plus Codes) Library -->
+    <script src="https://cdn.jsdelivr.net/gh/google/open-location-code/js/src/openlocationcode.min.js"></script>
+    <script src="app.js?v=12"></script>
+</body>
+</html>
